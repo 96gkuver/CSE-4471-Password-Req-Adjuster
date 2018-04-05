@@ -81,13 +81,43 @@ public class AdminWindow {
 		enterButton.setPreferredSize(new Dimension(300, 50));
 		enterButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e){
+				
+				String errors = "";
 								
 				// set password requirements based on input
-				passReqs.setPasswordCharacters(Integer.parseInt(charField.getText()));
-				passReqs.setPasswordNumbers(Integer.parseInt(numField.getText()));
-				passReqs.setPasswordSpecials(Integer.parseInt(specialField.getText()));
+				try{
+					int tempChar = Integer.parseInt(charField.getText());
+					passReqs.setPasswordCharacters(tempChar);
+				} catch (Exception err){
+					errors = errors + "Number of characters must be an integer\n";
+					charField.setText("0");
+				}
 				
-				mainFrame.dispose();
+				try{
+					int tempNum = Integer.parseInt(numField.getText());
+					passReqs.setPasswordNumbers(tempNum);
+				} catch (Exception err){
+					errors = errors + "Number of numbers must be an integer\n";
+					numField.setText("0");
+				}
+	
+				try{
+					int tempSpec = Integer.parseInt(specialField.getText());
+					passReqs.setPasswordSpecials(tempSpec);
+				} catch (Exception err){
+					errors = errors + "Number of special characters must be an integer\n";
+					specialField.setText("0");
+				}
+				
+				if (errors.length() > 0){
+					errors = "Your requirements have the following errors:\n\n"+errors+"\n";
+					JOptionPane.showMessageDialog(mainFrame, errors, "Requirment Errors", JOptionPane.ERROR_MESSAGE);
+					
+				}else{
+					JOptionPane.showMessageDialog(mainFrame, "Requirements successfully adjusted!", "Requirements Adjusted", JOptionPane.INFORMATION_MESSAGE);
+					mainFrame.dispose();
+				}
+
 			}
 		});
 		
