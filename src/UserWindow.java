@@ -7,9 +7,11 @@ import java.awt.event.ActionListener;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
+import com.sun.xml.internal.ws.util.StringUtils;
 
 public class UserWindow {
 	private JFrame mainFrame;
@@ -32,7 +34,7 @@ public class UserWindow {
 	}
 	
 	private void prepareGUI(){
-		mainFrame = new JFrame("Password Requirement Adjuste (User)");
+		mainFrame = new JFrame("Password Requirement Adjuster (User)");
 		mainFrame.setSize(400, 600);
 		mainFrame.setLayout(new GridLayout(4, 1));
 	
@@ -66,7 +68,55 @@ public class UserWindow {
 		enterButton.setPreferredSize(new Dimension(300, 50));
 		enterButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e){
-				mainFrame.dispose();
+				PasswordReqs passReqs = PasswordReqs.getInstance();
+				
+				int reqChars = passReqs.getPasswordCharacters();
+				int reqNums = passReqs.getPasswordNumbers();
+				int reqSpecials = passReqs.getPasswordSpecials();
+				
+				String curPassword = passField.getText();
+				
+				String errors = "";
+				
+				// check if password is the greater than the minimum length
+				if (curPassword.length() < reqChars){
+					errors = errors+"Not long enough (minimum characters: "+reqChars+")\n";
+				}
+				
+				// count amount of numbers in password
+				int passNums = 0;
+				for (int x = 0; x < curPassword.length(); x++){
+					if (Character.isDigit(curPassword.charAt(x))){
+						passNums += 1;
+					}
+				}
+				
+				if (passNums < reqNums){
+					errors = errors+"Not enough numbers (minimum numbers: "+reqNums+")\n";
+				}
+				
+								// count amount of numbers in password
+				int specialNums = 0;
+				for (int x = 0; x < curPassword.length(); x++){
+					if (!Character.isDigit(curPassword.charAt(x)) && !Character.isAlphabetic(curPassword.charAt(x))){
+						specialNums += 1;
+					}
+				}
+				
+				if (specialNums < reqSpecials){
+					errors = errors+"Not enough special characters (minimum special characters: "+reqSpecials+")\n";
+				}
+				
+				if (errors.length() > 0){
+					errors = "Your password has the following errors:\n\n"+errors+"\n";
+					JOptionPane.showMessageDialog(mainFrame, errors, "Password Errors", JOptionPane.ERROR_MESSAGE);
+					
+					passField.setText("");
+				}else{
+					JOptionPane.showMessageDialog(mainFrame, "Account successfully created!", "Account Created", JOptionPane.INFORMATION_MESSAGE);
+					mainFrame.dispose();
+				}
+				
 			}
 		});
 		

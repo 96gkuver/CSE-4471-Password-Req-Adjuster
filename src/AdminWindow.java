@@ -28,6 +28,10 @@ public class AdminWindow {
 	
 	private JButton enterButton;
 	
+	// get instance of current password requirements
+	private PasswordReqs passReqs = PasswordReqs.getInstance();
+
+	
 	public AdminWindow(){
 		prepareGUI();
 	}
@@ -44,7 +48,7 @@ public class AdminWindow {
 		charPanel.setLayout(new GridLayout(2, 1));
 		
 		charLabel = new JLabel("Required amount of characters:");
-		charField = new JTextField();
+		charField = new JTextField(Integer.toString(passReqs.getPasswordCharacters()));
 		
 		charPanel.add(charLabel);
 		charPanel.add(charField);
@@ -54,7 +58,7 @@ public class AdminWindow {
 		numPanel.setLayout(new GridLayout(2, 1));
 		
 		numLabel = new JLabel("Required amount of numbers:");
-		numField = new JTextField();
+		numField = new JTextField(Integer.toString(passReqs.getPasswordNumbers()));
 		
 		numPanel.add(numLabel);
 		numPanel.add(numField);
@@ -64,7 +68,7 @@ public class AdminWindow {
 		specialPanel.setLayout(new GridLayout(2, 1));
 		
 		specialLabel = new JLabel("Required amount of special characters:");
-		specialField = new JTextField();
+		specialField = new JTextField(Integer.toString(passReqs.getPasswordSpecials()));
 		
 		specialPanel.add(specialLabel);
 		specialPanel.add(specialField);
@@ -77,6 +81,12 @@ public class AdminWindow {
 		enterButton.setPreferredSize(new Dimension(300, 50));
 		enterButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e){
+								
+				// set password requirements based on input
+				passReqs.setPasswordCharacters(Integer.parseInt(charField.getText()));
+				passReqs.setPasswordNumbers(Integer.parseInt(numField.getText()));
+				passReqs.setPasswordSpecials(Integer.parseInt(specialField.getText()));
+				
 				mainFrame.dispose();
 			}
 		});
