@@ -9,6 +9,10 @@ public class PasswordReqs {
 	private int passwordNumbers = 0;
 	private int passwordSpecials = 0;
 	
+	private boolean passwordHasUserName = true;
+	private boolean passwordHasName = true;
+	private boolean passwordHasBirth = true;
+	
 	private PasswordReqs(){
 		
 	}
@@ -43,6 +47,30 @@ public class PasswordReqs {
 	
 	public void setPasswordSpecials(int specials){
 		passwordSpecials = specials;
+	}
+	
+	public boolean getPasswordHasUserName(){
+		return passwordHasUserName;
+	}
+	
+	public void setPasswordHasUserName(boolean hasUserName){
+		passwordHasUserName = hasUserName;
+	}
+	
+	public boolean getPasswordHasName(){
+		return passwordHasName;
+	}
+	
+	public void setPasswordHasName(boolean hasName){
+		passwordHasName = hasName;
+	}
+	
+	public boolean getPasswordHasBirth(){
+		return passwordHasBirth;
+	}
+	
+	public void setPasswordHasBirth(boolean hasBirth){
+		passwordHasBirth = hasBirth;
 	}
 
 }

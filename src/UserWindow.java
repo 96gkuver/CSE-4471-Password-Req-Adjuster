@@ -5,26 +5,35 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
+import javax.swing.JFormattedTextField;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
-
-import com.sun.xml.internal.ws.util.StringUtils;
+import javax.swing.text.MaskFormatter;
 
 public class UserWindow {
 	private JFrame mainFrame;
 	
-	private JPanel namePanel;
+	private JPanel firstNamePanel;
+	private JPanel lastNamePanel;
+	private JPanel birthPanel;
+	private JPanel userNamePanel;
 	private JPanel passPanel;
 	private JPanel enterPanel;
 
 	private JLabel instrLabel;
-	private JLabel nameLabel;
+	private JLabel firstNameLabel;
+	private JLabel lastNameLabel;
+	private JLabel birthLabel;
+	private JLabel userNameLabel;
 	private JLabel passLabel;
 	
-	private JTextField nameField;
+	private JTextField firstNameField;
+	private JTextField lastNameField;
+	private JFormattedTextField birthField;
+	private JTextField userNameField;
 	private JTextField passField;
 	
 	private JButton enterButton;
@@ -34,21 +43,60 @@ public class UserWindow {
 	}
 	
 	private void prepareGUI(){
+		
+		MaskFormatter mask = null;
+        try {
+            mask = new MaskFormatter("## / ## / ####");//the # is for numeric values
+            mask.setPlaceholderCharacter('#');
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+		
 		mainFrame = new JFrame("Password Requirement Adjuster (User)");
 		mainFrame.setSize(400, 600);
-		mainFrame.setLayout(new GridLayout(4, 1));
+		mainFrame.setLayout(new GridLayout(7, 1));
 	
 		instrLabel = new JLabel("Create an account:", JLabel.CENTER);
 
-		// username prompt
-		namePanel = new JPanel();
-		namePanel.setLayout(new GridLayout(2, 1));
+		// first name prompt
+		firstNamePanel = new JPanel();
+		firstNamePanel.setLayout(new GridLayout(2, 1));
 		
-		nameLabel = new JLabel("Create a username:");
-		nameField = new JTextField();
+		firstNameLabel = new JLabel("Enter your first name:");
+		firstNameField = new JTextField();
 		
-		namePanel.add(nameLabel);
-		namePanel.add(nameField);
+		firstNamePanel.add(firstNameLabel);
+		firstNamePanel.add(firstNameField);
+		
+		// last name prompt
+		lastNamePanel = new JPanel();
+		lastNamePanel.setLayout(new GridLayout(2, 1));
+		
+		lastNameLabel = new JLabel("Enter your last name:");
+		lastNameField = new JTextField();
+		
+		lastNamePanel.add(lastNameLabel);
+		lastNamePanel.add(lastNameField);
+
+		// date of birth prompt
+		birthPanel = new JPanel();
+		birthPanel.setLayout(new GridLayout(2, 1));
+		
+		birthLabel = new JLabel("Enter your birthday:");
+		birthField = new JFormattedTextField(mask);
+		
+		birthPanel.add(birthLabel);
+		birthPanel.add(birthField);
+
+		// user name prompt
+		userNamePanel = new JPanel();
+		userNamePanel.setLayout(new GridLayout(2, 1));
+		
+		userNameLabel = new JLabel("Create a user name:");
+		userNameField = new JTextField();
+		
+		userNamePanel.add(userNameLabel);
+		userNamePanel.add(userNameField);
 		
 		// password prompt
 		passPanel = new JPanel();
@@ -74,6 +122,10 @@ public class UserWindow {
 				int reqNums = passReqs.getPasswordNumbers();
 				int reqSpecials = passReqs.getPasswordSpecials();
 				
+				boolean reqHasUserName = passReqs.getPasswordHasUserName();
+				boolean reqHasName = passReqs.getPasswordHasName();
+				boolean reqHasBirth = passReqs.getPasswordHasBirth();
+				
 				String curPassword = passField.getText();
 				
 				String errors = "";
@@ -91,11 +143,12 @@ public class UserWindow {
 					}
 				}
 				
+				// check if password has greater than the minimum number of numbers
 				if (passNums < reqNums){
 					errors = errors+"Not enough numbers (minimum numbers: "+reqNums+")\n";
 				}
 				
-								// count amount of numbers in password
+				// count amount of numbers in password
 				int specialNums = 0;
 				for (int x = 0; x < curPassword.length(); x++){
 					if (!Character.isDigit(curPassword.charAt(x)) && !Character.isAlphabetic(curPassword.charAt(x))){
@@ -103,8 +156,35 @@ public class UserWindow {
 					}
 				}
 				
+				// check if password has greater than the minimum number of special characters
 				if (specialNums < reqSpecials){
 					errors = errors+"Not enough special characters (minimum special characters: "+reqSpecials+")\n";
+				}
+				
+				// if the password cannot contain the account holder's user name
+				if (!reqHasUserName){
+					if (curPassword.toLowerCase().contains(userNameField.getText().toLowerCase())){
+						errors = errors+"Password cannot contain your user name\n";
+					}
+				}
+				
+				// if the password cannot contain the account holder's name
+				if (!reqHasName){
+					if (curPassword.toLowerCase().contains(firstNameField.getText().toLowerCase()) 
+							|| curPassword.toLowerCase().contains(lastNameField.getText().toLowerCase())){
+						errors = errors+"Password cannot contain your first name or last name\n";
+					}
+				}
+				
+				// if password cannot contain the account holder's birthday
+				if (!reqHasBirth){
+					String birthDate = birthField.getText().substring(0, 2)+birthField.getText().substring(5, 7)+birthField.getText().substring(10, 14);
+					String monthDay = birthField.getText().substring(0, 2)+birthField.getText().substring(5, 7);
+					String year = birthField.getText().substring(10, 14);
+					
+					if (curPassword.contains(birthDate) || curPassword.contains(monthDay) || curPassword.contains(year)){
+						errors = errors+"Password cannot contain your birthday in any form (month/day, year, or actual date)\n";
+					}
 				}
 				
 				if (errors.length() > 0){
@@ -123,7 +203,10 @@ public class UserWindow {
 		enterPanel.add(enterButton);
 		
 		mainFrame.add(instrLabel);
-		mainFrame.add(namePanel);
+		mainFrame.add(firstNamePanel);
+		mainFrame.add(lastNamePanel);
+		mainFrame.add(birthPanel);
+		mainFrame.add(userNamePanel);
 		mainFrame.add(passPanel);
 		mainFrame.add(enterPanel);
 		mainFrame.setVisible(true);
