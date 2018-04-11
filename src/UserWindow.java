@@ -1,5 +1,6 @@
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -11,6 +12,8 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.UIManager;
+import javax.swing.plaf.FontUIResource;
 import javax.swing.text.MaskFormatter;
 
 public class UserWindow {
@@ -38,6 +41,8 @@ public class UserWindow {
 	
 	private JButton enterButton;
 	
+	private Font font = new Font("Arial", Font.PLAIN, 30);
+	
 	public UserWindow(){
 		prepareGUI();
 	}
@@ -53,17 +58,20 @@ public class UserWindow {
         }
 		
 		mainFrame = new JFrame("Password Requirement Adjuster (User)");
-		mainFrame.setSize(400, 600);
+		mainFrame.setExtendedState(JFrame.MAXIMIZED_BOTH);
 		mainFrame.setLayout(new GridLayout(7, 1));
 	
 		instrLabel = new JLabel("Create an account:", JLabel.CENTER);
+		instrLabel.setFont(font);
 
 		// first name prompt
 		firstNamePanel = new JPanel();
 		firstNamePanel.setLayout(new GridLayout(2, 1));
 		
 		firstNameLabel = new JLabel("Enter your first name:");
+		firstNameLabel.setFont(font);
 		firstNameField = new JTextField();
+		firstNameField.setFont(font);
 		
 		firstNamePanel.add(firstNameLabel);
 		firstNamePanel.add(firstNameField);
@@ -73,7 +81,9 @@ public class UserWindow {
 		lastNamePanel.setLayout(new GridLayout(2, 1));
 		
 		lastNameLabel = new JLabel("Enter your last name:");
+		lastNameLabel.setFont(font);
 		lastNameField = new JTextField();
+		lastNameField.setFont(font);
 		
 		lastNamePanel.add(lastNameLabel);
 		lastNamePanel.add(lastNameField);
@@ -83,7 +93,9 @@ public class UserWindow {
 		birthPanel.setLayout(new GridLayout(2, 1));
 		
 		birthLabel = new JLabel("Enter your birthday:");
+		birthLabel.setFont(font);
 		birthField = new JFormattedTextField(mask);
+		birthField.setFont(font);
 		
 		birthPanel.add(birthLabel);
 		birthPanel.add(birthField);
@@ -93,7 +105,9 @@ public class UserWindow {
 		userNamePanel.setLayout(new GridLayout(2, 1));
 		
 		userNameLabel = new JLabel("Create a user name:");
+		userNameLabel.setFont(font);
 		userNameField = new JTextField();
+		userNameField.setFont(font);
 		
 		userNamePanel.add(userNameLabel);
 		userNamePanel.add(userNameField);
@@ -103,7 +117,9 @@ public class UserWindow {
 		passPanel.setLayout(new GridLayout(2, 1));
 		
 		passLabel = new JLabel("Create a password:");
+		passLabel.setFont(font);
 		passField = new JTextField();
+		passField.setFont(font);
 		
 		passPanel.add(passLabel);
 		passPanel.add(passField);
@@ -113,7 +129,8 @@ public class UserWindow {
 		enterPanel.setLayout(new FlowLayout());
 		
 		enterButton = new JButton("Create Account");
-		enterButton.setPreferredSize(new Dimension(300, 50));
+		enterButton.setPreferredSize(new Dimension(500, 100));
+		enterButton.setFont(font);
 		enterButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e){
 				PasswordReqs passReqs = PasswordReqs.getInstance();
@@ -132,7 +149,7 @@ public class UserWindow {
 				
 				// check if password is the greater than the minimum length
 				if (curPassword.length() < reqChars){
-					errors = errors+"Not long enough (minimum characters: "+reqChars+")\n";
+					errors = errors+"Not long enough (minimum characters: "+reqChars+")<br>";
 				}
 				
 				// count amount of numbers in password
@@ -145,7 +162,7 @@ public class UserWindow {
 				
 				// check if password has greater than the minimum number of numbers
 				if (passNums < reqNums){
-					errors = errors+"Not enough numbers (minimum numbers: "+reqNums+")\n";
+					errors = errors+"Not enough numbers (minimum numbers: "+reqNums+")<br>";
 				}
 				
 				// count amount of numbers in password
@@ -158,13 +175,13 @@ public class UserWindow {
 				
 				// check if password has greater than the minimum number of special characters
 				if (specialNums < reqSpecials){
-					errors = errors+"Not enough special characters (minimum special characters: "+reqSpecials+")\n";
+					errors = errors+"Not enough special characters (minimum special characters: "+reqSpecials+")<br>";
 				}
 				
 				// if the password cannot contain the account holder's user name
 				if (!reqHasUserName){
 					if (curPassword.toLowerCase().contains(userNameField.getText().toLowerCase())){
-						errors = errors+"Password cannot contain your user name\n";
+						errors = errors+"Password cannot contain your user name<br>";
 					}
 				}
 				
@@ -172,7 +189,7 @@ public class UserWindow {
 				if (!reqHasName){
 					if (curPassword.toLowerCase().contains(firstNameField.getText().toLowerCase()) 
 							|| curPassword.toLowerCase().contains(lastNameField.getText().toLowerCase())){
-						errors = errors+"Password cannot contain your first name or last name\n";
+						errors = errors+"Password cannot contain your first name or last name<br>";
 					}
 				}
 				
@@ -183,17 +200,22 @@ public class UserWindow {
 					String year = birthField.getText().substring(10, 14);
 					
 					if (curPassword.contains(birthDate) || curPassword.contains(monthDay) || curPassword.contains(year)){
-						errors = errors+"Password cannot contain your birthday in any form (month/day, year, or actual date)\n";
+						errors = errors+"Password cannot contain your birthday in any form (month/day, year, or actual date)<br>";
 					}
 				}
 				
+				UIManager.put("OptionPane.buttonFont", new FontUIResource(font));
 				if (errors.length() > 0){
-					errors = "Your password has the following errors:\n\n"+errors+"\n";
-					JOptionPane.showMessageDialog(mainFrame, errors, "Password Errors", JOptionPane.ERROR_MESSAGE);
+					errors = "<html><body>Your password has the following errors:<br><br>"+errors+"<br></body></html>";
+					JLabel temp = new JLabel(errors);
+					temp.setFont(font);
+					JOptionPane.showMessageDialog(mainFrame, temp, "Password Errors", JOptionPane.ERROR_MESSAGE);
 					
 					passField.setText("");
 				}else{
-					JOptionPane.showMessageDialog(mainFrame, "Account successfully created!", "Account Created", JOptionPane.INFORMATION_MESSAGE);
+					JLabel temp = new JLabel("Account successfully created!");
+					temp.setFont(font);
+					JOptionPane.showMessageDialog(mainFrame, temp, "Account Created", JOptionPane.INFORMATION_MESSAGE);
 					mainFrame.dispose();
 				}
 				

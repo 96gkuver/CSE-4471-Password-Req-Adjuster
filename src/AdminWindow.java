@@ -1,5 +1,6 @@
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -7,6 +8,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
 import javax.swing.*;
+import javax.swing.plaf.FontUIResource;
 
 
 public class AdminWindow {
@@ -15,9 +17,14 @@ public class AdminWindow {
 	private JPanel charPanel;
 	private JPanel numPanel;
 	private JPanel specialPanel;
+
 	private JPanel userNamePanel;
+	private JPanel userNameYesNoPanel;
 	private JPanel namePanel;
+	private JPanel nameYesNoPanel;
 	private JPanel birthPanel;
+	private JPanel birthYesNoPanel;
+
 	private JPanel enterPanel;
 
 	private JLabel instrLabel;
@@ -47,7 +54,8 @@ public class AdminWindow {
 	
 	// get instance of current password requirements
 	private PasswordReqs passReqs = PasswordReqs.getInstance();
-
+	
+	private Font font = new Font("Arial", Font.PLAIN, 30);
 	
 	public AdminWindow(){
 		prepareGUI();
@@ -55,17 +63,20 @@ public class AdminWindow {
 	
 	private void prepareGUI(){
 		mainFrame = new JFrame("Password Requirement Adjuster (Admin)");
-		mainFrame.setSize(400, 800);
+		mainFrame.setExtendedState(JFrame.MAXIMIZED_BOTH);
 		mainFrame.setLayout(new GridLayout(8, 1));
 	
 		instrLabel = new JLabel("Enter your password requirements:", JLabel.CENTER);
+		instrLabel.setFont(font);
 
 		// character question
 		charPanel = new JPanel();
 		charPanel.setLayout(new GridLayout(2, 1));
 		
 		charLabel = new JLabel("Required amount of characters:");
+		charLabel.setFont(font);
 		charField = new JTextField(Integer.toString(passReqs.getPasswordCharacters()));
+		charField.setFont(font);
 		
 		charPanel.add(charLabel);
 		charPanel.add(charField);
@@ -75,7 +86,9 @@ public class AdminWindow {
 		numPanel.setLayout(new GridLayout(2, 1));
 		
 		numLabel = new JLabel("Required amount of numbers:");
+		numLabel.setFont(font);
 		numField = new JTextField(Integer.toString(passReqs.getPasswordNumbers()));
+		numField.setFont(font);
 		
 		numPanel.add(numLabel);
 		numPanel.add(numField);
@@ -85,19 +98,26 @@ public class AdminWindow {
 		specialPanel.setLayout(new GridLayout(2, 1));
 		
 		specialLabel = new JLabel("Required amount of special characters:");
+		specialLabel.setFont(font);
 		specialField = new JTextField(Integer.toString(passReqs.getPasswordSpecials()));
+		specialField.setFont(font);
 		
 		specialPanel.add(specialLabel);
 		specialPanel.add(specialField);
 		
 		// username question
 		userNamePanel = new JPanel();
-		userNamePanel.setLayout(new GridLayout(3, 1));
+		userNamePanel.setLayout(new GridLayout(2, 1));
+		
+		userNameYesNoPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
 		
 		userNameLabel = new JLabel("Should usernames be allowed in the password?");
+		userNameLabel.setFont(font);
 		
 		yesUserNameButton = new JRadioButton("yes");
+		yesUserNameButton.setFont(font);
 		noUserNameButton = new JRadioButton("no");
+		noUserNameButton.setFont(font);
 		
 		if (passReqs.getPasswordHasUserName()){
 			yesUserNameButton.setSelected(true);
@@ -110,17 +130,25 @@ public class AdminWindow {
 		userNameGroup.add(noUserNameButton);
 		
 		userNamePanel.add(userNameLabel);
-		userNamePanel.add(yesUserNameButton);
-		userNamePanel.add(noUserNameButton);
+
+		userNameYesNoPanel.add(yesUserNameButton);
+		userNameYesNoPanel.add(noUserNameButton);
+		
+		userNamePanel.add(userNameYesNoPanel);
 		
 		// name question
 		namePanel = new JPanel();
-		namePanel.setLayout(new GridLayout(3, 1));
+		namePanel.setLayout(new GridLayout(2, 1));
+		
+		nameYesNoPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
 		
 		nameLabel = new JLabel("Should the account holder's name be allowed in the password?");
+		nameLabel.setFont(font);
 		
 		yesNameButton = new JRadioButton("yes");
+		yesNameButton.setFont(font);
 		noNameButton = new JRadioButton("no");
+		noNameButton.setFont(font);
 		
 		if (passReqs.getPasswordHasName()){
 			yesNameButton.setSelected(true);
@@ -133,17 +161,25 @@ public class AdminWindow {
 		nameGroup.add(noNameButton);
 		
 		namePanel.add(nameLabel);
-		namePanel.add(yesNameButton);
-		namePanel.add(noNameButton);
+
+		nameYesNoPanel.add(yesNameButton);
+		nameYesNoPanel.add(noNameButton);
+		
+		namePanel.add(nameYesNoPanel);
 		
 		// birthday question
 		birthPanel = new JPanel();
-		birthPanel.setLayout(new GridLayout(3, 1));
+		birthPanel.setLayout(new GridLayout(2, 1));
+		
+		birthYesNoPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
 		
 		birthLabel = new JLabel("Should the account holder's birthday be allowed in the password?");
+		birthLabel.setFont(font);
 		
 		yesBirthButton = new JRadioButton("yes");
+		yesBirthButton.setFont(font);
 		noBirthButton = new JRadioButton("no");
+		noBirthButton.setFont(font);
 
 		if (passReqs.getPasswordHasBirth()){
 			yesBirthButton.setSelected(true);
@@ -156,15 +192,19 @@ public class AdminWindow {
 		birthGroup.add(noBirthButton);
 		
 		birthPanel.add(birthLabel);
-		birthPanel.add(yesBirthButton);
-		birthPanel.add(noBirthButton);
+
+		birthYesNoPanel.add(yesBirthButton);
+		birthYesNoPanel.add(noBirthButton);
+		
+		birthPanel.add(birthYesNoPanel);
 		
 		// enter button
 		enterPanel = new JPanel();
 		enterPanel.setLayout(new FlowLayout());
 		
 		enterButton = new JButton("Adjust Requirements");
-		enterButton.setPreferredSize(new Dimension(300, 50));
+		enterButton.setPreferredSize(new Dimension(500, 100));
+		enterButton.setFont(font);
 		enterButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e){
 				
@@ -179,7 +219,7 @@ public class AdminWindow {
 					int tempChar = Integer.parseInt(charField.getText());
 					passReqs.setPasswordCharacters(tempChar);
 				} catch (Exception err){
-					errors = errors + "Number of characters must be an integer\n";
+					errors = errors + "Number of characters must be an integer<br>";
 					charField.setText("0");
 				}
 				
@@ -187,7 +227,7 @@ public class AdminWindow {
 					int tempNum = Integer.parseInt(numField.getText());
 					passReqs.setPasswordNumbers(tempNum);
 				} catch (Exception err){
-					errors = errors + "Number of numbers must be an integer\n";
+					errors = errors + "Number of numbers must be an integer<br>";
 					numField.setText("0");
 				}
 	
@@ -195,16 +235,21 @@ public class AdminWindow {
 					int tempSpec = Integer.parseInt(specialField.getText());
 					passReqs.setPasswordSpecials(tempSpec);
 				} catch (Exception err){
-					errors = errors + "Number of special characters must be an integer\n";
+					errors = errors + "Number of special characters must be an integer<br>";
 					specialField.setText("0");
 				}
 				
+				UIManager.put("OptionPane.buttonFont", new FontUIResource(font));
 				if (errors.length() > 0){
-					errors = "Your requirements have the following errors:\n\n"+errors+"\n";
-					JOptionPane.showMessageDialog(mainFrame, errors, "Requirment Errors", JOptionPane.ERROR_MESSAGE);
+					errors = "<html><body>Your requirements have the following errors:<br><br>"+errors+"<br></body></html>";
+					JLabel temp = new JLabel(errors);
+					temp.setFont(font);
+					JOptionPane.showMessageDialog(mainFrame, temp, "Requirment Errors", JOptionPane.ERROR_MESSAGE);
 					
 				}else{
-					JOptionPane.showMessageDialog(mainFrame, "Requirements successfully adjusted!", "Requirements Adjusted", JOptionPane.INFORMATION_MESSAGE);
+					JLabel temp = new JLabel("Requirements successfully adjusted!");
+					temp.setFont(font);
+					JOptionPane.showMessageDialog(mainFrame, temp, "Requirements Adjusted", JOptionPane.INFORMATION_MESSAGE);
 					mainFrame.dispose();
 				}
 
